@@ -1,5 +1,7 @@
+import 'package:flutter/services.dart';
 import 'package:push_notify/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:push_notify/libraries/UniDialog.dart';
 
 class BaseDrawer extends StatelessWidget {
   BaseDrawer({Key? key, Widget? child, String? semanticLabel});
@@ -54,7 +56,16 @@ class BaseDrawer extends StatelessWidget {
                   ListTile(
                     title: Text('종료'),
                     onTap: () {
-                      //종료하기
+                      UniDialog.callDialog(
+                        context,
+                        title: "경고",
+                        content: "앱을 종료하시겠습니까?",
+                        positiveText: "예",
+                        positive: () {
+                          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                        },
+                        negativeText: "아니오"
+                      );
                     },
                   )
                 ],
