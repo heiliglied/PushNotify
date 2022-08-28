@@ -39,7 +39,7 @@ class BaseDrawer extends StatelessWidget {
                     ListTile(
                       title: Text('신규 알림 추가'),
                       onTap: () {
-                        Navigator.pushNamed(context, Routes.mainPage, arguments: {"title": "신규 알림 추가"});
+                        Navigator.pushNamed(context, Routes.set, arguments: {"title": "신규 알림 추가"});
                       },
                     ),
                 ],

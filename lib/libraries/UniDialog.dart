@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 class UniDialog {
+  UniDialog._();
   static void callDialog(BuildContext context, {
     required String title,
     required String content,
