@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:push_notify/routes.dart';
+// import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
+  // initializeDateFormatting().then((_) => runApp(const Main()));
   runApp(const Main());
 }
 
@@ -12,8 +15,14 @@ class Main extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        initialRoute: Routes.mainPage,
-        routes: Routes.routes,
+      initialRoute: Routes.mainPage,
+      routes: Routes.routes,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('ko', '')],
     );
   }
 }
