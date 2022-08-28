@@ -21,6 +21,10 @@ LazyDatabase _openConnection() {
 )
 class MyDatabase extends _$MyDatabase {
   MyDatabase() : super(_openConnection());
+
   @override
   int get schemaVersion => 1;
+
+  Future<int> insertNoti(NotiCompanion notiCompanion) => into(noti).insert(notiCompanion);
+
 }
