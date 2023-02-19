@@ -1,14 +1,13 @@
 import 'dart:io';
-
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:push_notify/database/tables/notification.dart';
-
 part 'database.g.dart';
 
 @DriftDatabase(tables: [Notification])
+
 class Database extends _$Database {
   // we tell the database where to store the data with this constructor
   Database() : super(_openConnection());
@@ -17,7 +16,12 @@ class Database extends _$Database {
   @override
   int get schemaVersion => 1;
 
-  Future<int> insertNoti(NotificationCompanion noti) => into(notification).insert(noti);
+  Future<int> insertNoti(NotificationCompanion notiCompanion) => into(notification).insert(notiCompanion);
+
+  Stream<List<NotificationData>> watchAllNoti() => select(notification).watch();
+  Stream<List<NotificationData>> watchNotNotifiedNoti() => (select(notification)
+    ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))
+  ).watch();
 }
 
 LazyDatabase _openConnection() {

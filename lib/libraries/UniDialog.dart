@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class UniDialog {
   UniDialog._();
+
   static void callDialog(BuildContext context, {
     required String title,
     required String content,
@@ -13,7 +15,15 @@ class UniDialog {
     void Function()? negative,
   }) {
     if(TargetPlatform.iOS == true) {
-
+      _cupertinoDialog(
+          context,
+          title: title,
+          content: content,
+          positiveText: positiveText,
+          positive: positive,
+          negativeText: negativeText,
+          negative: negative
+      );
     } else {
       _showDialog(
         context,
@@ -77,5 +87,18 @@ class UniDialog {
   }
   static void _dismiss(context) {
     Navigator.pop(context);
+  }
+
+  static void showToast(String message, String time) {
+    Toast length = Toast.LENGTH_SHORT;
+    if(time == 'long') {
+      length = Toast.LENGTH_LONG;
+    }
+
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: length,
+        gravity: ToastGravity.BOTTOM
+    );
   }
 }

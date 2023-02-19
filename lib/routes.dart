@@ -1,5 +1,5 @@
 import 'package:push_notify/views/mainpage.dart';
-import 'package:push_notify/views/set.dart';
+import 'package:push_notify/views/setnotify.dart';
 import 'package:flutter/widgets.dart';
 
 class Routes {
@@ -9,6 +9,6 @@ class Routes {
 
   static final routes = <String, WidgetBuilder>{
     mainPage: (BuildContext context) => MainPage(),
-    set: (BuildContext context) => Set(),
+    set: (BuildContext context) => SetNotify(),
   };
 }
