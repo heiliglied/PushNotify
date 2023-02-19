@@ -1,6 +1,12 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:get/get.dart' hide Value;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:push_notify/database/database.dart';
+import 'package:push_notify/libraries/UniDialog.dart';
 import 'package:push_notify/views/partitions/BaseDrawer.dart';
 
 class DetailPage extends StatefulWidget {
@@ -41,11 +47,18 @@ class _DetailPageState extends State<DetailPage> {
           );
         });
     if (picked != null && picked != selectedTime) {
+      print("$picked");
       setState(() {
         selectedTime = picked;
-        timeController.text = '${picked.hour}:${picked.minute}';
+        timeController.text =
+            '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
       });
     }
+  }
+
+  Future<int> insertNotiData(NotiCompanion noti) async {
+    // return Get.find<MyDatabase>().addNoti(noti);
+    return Provider.of<MyDatabase>(context, listen: false).addNoti(noti);
   }
 
   @override
@@ -63,36 +76,36 @@ class _DetailPageState extends State<DetailPage> {
                 padding: EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    Text("알람 등록", style: TextStyle(fontSize: 20)),
+                    const Text("알람 등록", style: TextStyle(fontSize: 20)),
                     TextField(
                       onTap: () => _selectDate(context),
                       controller: dateController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(), labelText: "날짜"),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     TextField(
                       onTap: () => _selectTime(context),
                       controller: timeController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(), labelText: "시간"),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     TextField(
                       controller: titleController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(), labelText: "제목"),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     TextField(
                       controller: contentController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(), labelText: "본문"),
                     ),
                   ],
@@ -103,11 +116,50 @@ class _DetailPageState extends State<DetailPage> {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                child: Text("다음"),
-                onPressed: () {},
+                child: Text("저장"),
+                onPressed: () async {
+                  if (dateController.text.trim() != "" &&
+                      timeController.text.trim() != "" &&
+                      titleController.text.trim() != "" &&
+                      contentController.text.trim() != "") {
+                    var selected = DateTime(
+                        selectedDate.year,
+                        selectedDate.month,
+                        selectedDate.day,
+                        selectedTime.hour,
+                        selectedTime.minute);
+                    insertNotiData(NotiCompanion(
+                            date: Value(selected),
+                            title: Value(titleController.text),
+                            contents: Value(contentController.text),
+                            status: const Value(false)))
+                        .then((value) => {
+                              showToast("저장이 완료되었습니다."),
+                              Navigator.pop(context)
+                            })
+                        .onError((error, stackTrace) => {
+                          if(error.toString().contains("SqliteException(2067)")){
+                            showToast("이미 등록된 날짜입니다.")
+                          } else{
+                            showToast("등록에 실패했습니다.")
+                          }
+                    });
+                  } else {
+                    UniDialog.dialog(context,
+                        title: "경고",
+                        content: "작성하지 않은 항목이 있습니다.",
+                        positiveText: "확인", positive: () {
+                      Navigator.pop(context);
+                    });
+                  }
+                },
               ),
             )
           ],
         ));
+  }
+
+  void showToast(String msg){
+    Fluttertoast.showToast(msg: msg, toastLength: Toast.LENGTH_SHORT);
   }
 }

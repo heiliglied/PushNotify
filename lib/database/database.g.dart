@@ -9,7 +9,7 @@ part of 'database.dart';
 // ignore_for_file: type=lint
 class NotiData extends DataClass implements Insertable<NotiData> {
   final int id;
-  final String date;
+  final DateTime date;
   final String title;
   final String contents;
   final bool status;
@@ -23,7 +23,7 @@ class NotiData extends DataClass implements Insertable<NotiData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['date'] = Variable<String>(date);
+    map['date'] = Variable<DateTime>(date);
     map['title'] = Variable<String>(title);
     map['contents'] = Variable<String>(contents);
     map['status'] = Variable<bool>(status);
@@ -45,7 +45,7 @@ class NotiData extends DataClass implements Insertable<NotiData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return NotiData(
       id: serializer.fromJson<int>(json['id']),
-      date: serializer.fromJson<String>(json['date']),
+      date: serializer.fromJson<DateTime>(json['date']),
       title: serializer.fromJson<String>(json['title']),
       contents: serializer.fromJson<String>(json['contents']),
       status: serializer.fromJson<bool>(json['status']),
@@ -56,7 +56,7 @@ class NotiData extends DataClass implements Insertable<NotiData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'date': serializer.toJson<String>(date),
+      'date': serializer.toJson<DateTime>(date),
       'title': serializer.toJson<String>(title),
       'contents': serializer.toJson<String>(contents),
       'status': serializer.toJson<bool>(status),
@@ -65,7 +65,7 @@ class NotiData extends DataClass implements Insertable<NotiData> {
 
   NotiData copyWith(
           {int? id,
-          String? date,
+          DateTime? date,
           String? title,
           String? contents,
           bool? status}) =>
@@ -103,7 +103,7 @@ class NotiData extends DataClass implements Insertable<NotiData> {
 
 class NotiCompanion extends UpdateCompanion<NotiData> {
   final Value<int> id;
-  final Value<String> date;
+  final Value<DateTime> date;
   final Value<String> title;
   final Value<String> contents;
   final Value<bool> status;
@@ -116,7 +116,7 @@ class NotiCompanion extends UpdateCompanion<NotiData> {
   });
   NotiCompanion.insert({
     this.id = const Value.absent(),
-    required String date,
+    required DateTime date,
     required String title,
     required String contents,
     required bool status,
@@ -126,7 +126,7 @@ class NotiCompanion extends UpdateCompanion<NotiData> {
         status = Value(status);
   static Insertable<NotiData> custom({
     Expression<int>? id,
-    Expression<String>? date,
+    Expression<DateTime>? date,
     Expression<String>? title,
     Expression<String>? contents,
     Expression<bool>? status,
@@ -142,7 +142,7 @@ class NotiCompanion extends UpdateCompanion<NotiData> {
 
   NotiCompanion copyWith(
       {Value<int>? id,
-      Value<String>? date,
+      Value<DateTime>? date,
       Value<String>? title,
       Value<String>? contents,
       Value<bool>? status}) {
@@ -162,7 +162,7 @@ class NotiCompanion extends UpdateCompanion<NotiData> {
       map['id'] = Variable<int>(id.value);
     }
     if (date.present) {
-      map['date'] = Variable<String>(date.value);
+      map['date'] = Variable<DateTime>(date.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -203,9 +203,11 @@ class $NotiTable extends Noti with TableInfo<$NotiTable, NotiData> {
       defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
-  late final GeneratedColumn<String> date = GeneratedColumn<String>(
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
       'date', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: true,
+      defaultConstraints: 'UNIQUE');
   final VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -267,13 +269,17 @@ class $NotiTable extends Noti with TableInfo<$NotiTable, NotiData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {title, contents, status},
+      ];
+  @override
   NotiData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return NotiData(
       id: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       date: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}date'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       title: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
       contents: attachedDatabase.options.types

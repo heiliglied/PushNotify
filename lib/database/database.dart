@@ -7,7 +7,6 @@ import 'package:push_notify/database/table/Noti.dart';
 
 part 'database.g.dart';
 
-
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
@@ -25,6 +24,16 @@ class MyDatabase extends _$MyDatabase {
   @override
   int get schemaVersion => 1;
 
-  Future<int> insertNoti(NotiCompanion notiCompanion) => into(noti).insert(notiCompanion);
+  Future<int> addNoti(NotiCompanion notiCompanion) =>
+      into(noti).insert(notiCompanion);
 
+  Stream<List<NotiData>> watchAllNoti() => select(noti).watch();
+
+  Stream<List<NotiData>> watchNotNotifiedNoti() => (select(noti)
+        ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))
+  ).watch();
+  // Future<List<NotiData>> watchNotNotifiedNoti() => (select(noti)
+  //   ..where((t) => t.status.equals(false))
+  //   ..where((t) => t.date.isBiggerThanValue(DateTime.now())))
+  //     .get();
 }

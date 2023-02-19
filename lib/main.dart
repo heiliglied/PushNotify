@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:push_notify/database/database.dart';
 import 'package:push_notify/routes.dart';
 // import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
-  // initializeDateFormatting().then((_) => runApp(const Main()));
-  runApp(const Main());
+  runApp(
+    Provider<MyDatabase>(
+      create: (context) => MyDatabase(),
+      child: const Main(),
+      dispose: (context, db) => db.close(),
+    ),
+  );
 }
 
 class Main extends StatelessWidget {
