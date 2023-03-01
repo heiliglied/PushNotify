@@ -22,7 +22,7 @@ class Main extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: Routes.mainPage,
+      initialRoute: Routes.splash,
       routes: Routes.routes,
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,

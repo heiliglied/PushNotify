@@ -18,6 +18,7 @@ class Database extends _$Database {
 
   Future<int> insertNoti(NotificationCompanion notiCompanion) => into(notification).insert(notiCompanion);
 
+
   Stream<List<NotificationData>> watchAllNoti() => select(notification).watch();
   Stream<List<NotificationData>> watchNotNotifiedNoti() => (select(notification)
     ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))
