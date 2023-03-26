@@ -73,7 +73,7 @@ class _MainPageState extends State<MainPage> {
                   AppBar().preferredSize.height -
                   (20 * 2) -
                   MediaQuery.of(context).viewPadding.top,
-              child: StreamBuilder<List<NotificationData>>(
+              child: StreamBuilder<List<NotificationData>?>(
                 stream: Provider.of<Database>(context).watchNotNotifiedNoti(),
                 builder: (context, snapshot) {
                   return Column(children: [

@@ -23,6 +23,12 @@ class _SetNotify extends State<SetNotify> {
   TextEditingController alertContents = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    Map arguments = ModalRoute.of(context)?.settings.arguments as Map;
+
+    if(arguments['id'] != '') {
+
+    }
+
     double widgetWidth = MediaQuery.of(context).size.width;
     double widgetHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -40,8 +46,8 @@ class _SetNotify extends State<SetNotify> {
                     SizedBox(
                       height: 10,
                     ),
-                    const Text(
-                      '알림 등록',
+                    Text(
+                      arguments['title'],
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 24.0),
                     ),

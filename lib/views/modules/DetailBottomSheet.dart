@@ -1,7 +1,10 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:push_notify/routes.dart';
 import 'package:push_notify/database/database.dart';
+import 'package:provider/provider.dart';
 
 class DetailBottomSheet {
   Future showBottomSheet(BuildContext context, NotificationData item) {
@@ -97,17 +100,35 @@ class DetailBottomSheet {
                             )
                         ),
                         height: 50,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                              child: Text("알림 끄기"),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.lightBlueAccent
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                              ElevatedButton(
+                                  child: Text("알림 수정"),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.lightBlueAccent
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, Routes.set, arguments: {"title": "알림 수정", "id": item.id});
+                                  }
                               ),
-                              onPressed: () async {
-
-                              }
-                          ),
+                              Container(
+                                width: 5,
+                              ),
+                              ElevatedButton(
+                                  child: Text("알림 끄기"),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.deepOrange
+                                  ),
+                                  onPressed: () async {
+                                    updateNoti(context, item.id, NotificationCompanion(
+                                      status: Value(true),
+                                    ));
+                                  }
+                              )
+                          ],
                         )
                     ),
                   ],
@@ -116,5 +137,9 @@ class DetailBottomSheet {
         );
       },
     );
+  }
+
+  Future<int> updateNoti(BuildContext context, int id, NotificationCompanion noti) async {
+    return Provider.of<Database>(context, listen: false).updateNoti(id, noti);
   }
 }

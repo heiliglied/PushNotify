@@ -17,12 +17,13 @@ class Database extends _$Database {
   int get schemaVersion => 1;
 
   Future<int> insertNoti(NotificationCompanion notiCompanion) => into(notification).insert(notiCompanion);
-
-
   Stream<List<NotificationData>> watchAllNoti() => select(notification).watch();
-  Stream<List<NotificationData>> watchNotNotifiedNoti() => (select(notification)
+  Stream<List<NotificationData>>? watchNotNotifiedNoti() => (select(notification)
     ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))
   ).watch();
+  Future<int> updateNoti(int id, NotificationCompanion notiCompanion) => (update(notification) ..where((t) => t.id.equals(id))).write(notiCompanion);
+  Future<int> deleteNoti(int id) => (delete(notification) ..where((t) => t.id.equals(id))).go();
+
 }
 
 LazyDatabase _openConnection() {
