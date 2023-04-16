@@ -111,6 +111,7 @@ class DetailBottomSheet {
                                       backgroundColor: Colors.lightBlueAccent
                                   ),
                                   onPressed: () {
+                                    Navigator.pop(context);
                                     Navigator.pushNamed(context, Routes.set, arguments: {"title": "알림 수정", "id": item.id});
                                   }
                               ),
@@ -120,12 +121,26 @@ class DetailBottomSheet {
                               ElevatedButton(
                                   child: Text("알림 끄기"),
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.deepOrange
+                                      backgroundColor: Colors.black12
                                   ),
                                   onPressed: () async {
+                                    Navigator.pop(context);
                                     updateNoti(context, item.id, NotificationCompanion(
                                       status: Value(true),
                                     ));
+                                  }
+                              ),
+                              Container(
+                                width: 5,
+                              ),
+                              ElevatedButton(
+                                  child: Text("알림 삭제"),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.redAccent
+                                  ),
+                                  onPressed: () async {
+                                    deleteNoti(context, item.id);
+                                    Navigator.pop(context);
                                   }
                               )
                           ],
@@ -141,5 +156,9 @@ class DetailBottomSheet {
 
   Future<int> updateNoti(BuildContext context, int id, NotificationCompanion noti) async {
     return Provider.of<Database>(context, listen: false).updateNoti(id, noti);
+  }
+
+  Future<int> deleteNoti(BuildContext context, int id) async {
+    return Provider.of<Database>(context, listen: false).deleteNoti(id);
   }
 }

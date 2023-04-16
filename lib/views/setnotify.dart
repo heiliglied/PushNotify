@@ -15,22 +15,46 @@ class SetNotify extends StatefulWidget {
 }
 
 class _SetNotify extends State<SetNotify> {
+  Map arguments = {};
+  bool isInit = true;
+  String setType = 'insert';
   DateTime alertDate = DateTime.now();
   TimeOfDay alertTime = TimeOfDay.now();
   TextEditingController dateinput = TextEditingController();
   TextEditingController timeinput = TextEditingController();
   TextEditingController alertName = TextEditingController();
   TextEditingController alertContents = TextEditingController();
+
+  @override
+  void didChangeDependencies() {
+    arguments = (ModalRoute.of(context)?.settings.arguments??{}) as Map;
+    if(isInit) {
+      if(arguments['id'] != null) {
+        Provider.of<Database>(context, listen: false).selectNoti(arguments['id']).then((value) => {
+          if(value != null) {
+            setType = 'update',
+            setModifyData(
+                {
+                  "date": value.date,
+                  "title": value.title,
+                  "contents": value.contents,
+                }
+            ),
+          }
+        });
+      }
+    }
+    isInit = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
-    Map arguments = ModalRoute.of(context)?.settings.arguments as Map;
-
-    if(arguments['id'] != '') {
-
-    }
-
     double widgetWidth = MediaQuery.of(context).size.width;
     double widgetHeight = MediaQuery.of(context).size.height;
+
+    print(arguments);
+
     return Scaffold(
       appBar: BaseAppBar("메시지 알리미"),
       endDrawer: BaseDrawer(),
@@ -47,7 +71,7 @@ class _SetNotify extends State<SetNotify> {
                       height: 10,
                     ),
                     Text(
-                      arguments['title'],
+                      arguments['title'] ?? '신규 메시지 작성',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 24.0),
                     ),
@@ -153,7 +177,7 @@ class _SetNotify extends State<SetNotify> {
                       height: widgetHeight * 0.15 - AppBar().preferredSize.height,
                       padding: EdgeInsets.only(left: 10, right: 10),
                       child: ElevatedButton(
-                        child: Text("등록"),
+                        child: setType == 'insert' ? Text("등록") : Text("수정"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.lightBlueAccent
                         ),
@@ -179,21 +203,38 @@ class _SetNotify extends State<SetNotify> {
                               alertTime.minute
                           );
 
-                          insertNotiData(NotificationCompanion(
-                              date: Value(selecteDate),
-                              title: Value(alertName.text),
-                              contents: Value(alertContents.text),
-                              status: const Value(false)
-                          )).then((result) => {
+                          if(setType == 'insert') {
+                            insertNotiData(NotificationCompanion(
+                                date: Value(selecteDate),
+                                title: Value(alertName.text),
+                                contents: Value(alertContents.text),
+                                status: const Value(false)
+                            )).then((result) => {
                               UniDialog.showToast("등록 되었습니다.", 'short'),
                               resetInput()
-                          }).onError((error, stackTrace) => {
-                            if(error.toString().contains("SqliteException(2067)")){
-                              UniDialog.showToast("이미 등록된 날짜입니다.", 'short'),
-                            } else{
-                              UniDialog.showToast("등록에 실패했습니다.", 'short'),
-                            }
-                          });
+                            }).onError((error, stackTrace) => {
+                              if(error.toString().contains("SqliteException(2067)")){
+                                UniDialog.showToast("이미 등록된 날짜입니다.", 'short'),
+                              } else{
+                                UniDialog.showToast("등록에 실패했습니다.", 'short'),
+                              }
+                            });
+                          } else {
+                            updateNotiDate(arguments['id'] ?? 0, NotificationCompanion(
+                                date: Value(selecteDate),
+                                title: Value(alertName.text),
+                                contents: Value(alertContents.text),
+                                status: const Value(false)
+                            )).then((result) => {
+                              UniDialog.showToast("수정 되었습니다.", 'short'),
+                            }).onError((error, stackTrace) => {
+                              if(error.toString().contains("SqliteException(2067)")){
+                                UniDialog.showToast("이미 등록된 날짜입니다.", 'short'),
+                              } else{
+                                UniDialog.showToast("수정에 실패했습니다.", 'short'),
+                              }
+                            });
+                          }
                         },
                       ),
                     )
@@ -214,7 +255,23 @@ class _SetNotify extends State<SetNotify> {
     alertContents.text = '';
   }
 
+  void setModifyData(Map notiData) {
+    String dateString = notiData['date'].toString();
+    List timeSplit = dateString.split(' ');
+    List timeList = timeSplit[1].split(':');
+    alertTime = TimeOfDay(hour: int.parse(timeList[0]), minute: int.parse(timeList[1]));
+    alertDate = DateTime.parse(dateString);
+    dateinput.text = timeSplit[0];
+    timeinput.text = timeList[0] + ':' + timeList[1];
+    alertName.text = notiData['title'];
+    alertContents.text = notiData['contents'];
+  }
+
   Future<int> insertNotiData(NotificationCompanion noti) async {
     return Provider.of<Database>(context, listen: false).insertNoti(noti);
+  }
+
+  Future<int> updateNotiDate(int id, NotificationCompanion noti) async {
+    return Provider.of<Database>(context, listen: false).updateNoti(id, noti);
   }
 }

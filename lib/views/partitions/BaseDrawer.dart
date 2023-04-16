@@ -25,9 +25,9 @@ class BaseDrawer extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                     ListTile(
-                      title: Text('메인'),
+                      title: Text('홈'),
                       onTap: () {
-                        Navigator.pushNamed(context, Routes.mainPage, arguments: {"title": "메인"});
+                        Navigator.pushNamed(context, Routes.mainPage, arguments: {"title": "홈"});
                       },
                     ),
                     ListTile(

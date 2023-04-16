@@ -23,7 +23,7 @@ class Database extends _$Database {
   ).watch();
   Future<int> updateNoti(int id, NotificationCompanion notiCompanion) => (update(notification) ..where((t) => t.id.equals(id))).write(notiCompanion);
   Future<int> deleteNoti(int id) => (delete(notification) ..where((t) => t.id.equals(id))).go();
-
+  Future<NotificationData?> selectNoti(int id) => (select(notification)..where((t) => t.id.equals(id))..limit(1)).getSingleOrNull();
 }
 
 LazyDatabase _openConnection() {
