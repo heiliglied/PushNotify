@@ -19,8 +19,15 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget emptyPage = EmptyPage();
+  int page = 1;
+  int limit = 10;
+  bool loading = false, allLoaded = false;
 
   List<NotificationData> list = [];
+
+  fatchList() async {
+
+  }
 
   Widget addlistView(List<NotificationData> notiList) {
     return ListView.builder(
@@ -74,15 +81,20 @@ class _MainPageState extends State<MainPage> {
                   (20 * 2) -
                   MediaQuery.of(context).viewPadding.top,
               child: StreamBuilder<List<NotificationData>?>(
-                stream: Provider.of<Database>(context).watchNotNotifiedNoti(),
+                stream: Provider.of<Database>(context).watchNotNotifiedNotiPagination(page),
                 builder: (context, snapshot) {
-                  return Column(children: [
-                    Expanded(
-                        child: snapshot.hasData
-                            ? addlistView(snapshot.data!)
-                            : emptyPage
-                    )
-                  ]);
+                    if(!snapshot.hasData) {
+                      return Column(children: [
+                        Expanded(
+                          child: EmptyPage(),
+                        )
+                      ]);
+                    }
+                    return Column(children: [
+                      Expanded(
+                        child: addlistView(snapshot.data!),
+                      )
+                    ]);
                 },
               ),
             )

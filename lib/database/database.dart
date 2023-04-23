@@ -21,6 +21,10 @@ class Database extends _$Database {
   Stream<List<NotificationData>>? watchNotNotifiedNoti() => (select(notification)
     ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))
   ).watch();
+  //Stream<int> countNotNotifiedNoti() => (select(notification)..coun).watch();
+  Stream<List<NotificationData>>? watchNotNotifiedNotiPagination(int page) => (select(notification)
+    ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))..limit(10, offset: (page - 1) * 10)
+  ).watch();
   Future<int> updateNoti(int id, NotificationCompanion notiCompanion) => (update(notification) ..where((t) => t.id.equals(id))).write(notiCompanion);
   Future<int> deleteNoti(int id) => (delete(notification) ..where((t) => t.id.equals(id))).go();
   Future<NotificationData?> selectNoti(int id) => (select(notification)..where((t) => t.id.equals(id))..limit(1)).getSingleOrNull();

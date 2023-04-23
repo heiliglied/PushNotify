@@ -131,11 +131,16 @@ class _AlertList extends State<AlertList> {
                           child: StreamBuilder<List<NotificationData>>(
                             stream: Provider.of<Database>(context).watchNotNotifiedNoti(),
                             builder: (context, snapshot) {
+                              if(!snapshot.hasData) {
+                                return Column(children: [
+                                  Expanded(
+                                    child: addlistView(snapshot.data!),
+                                  )
+                                ]);
+                              }
                               return Column(children: [
                                 Expanded(
-                                    child: snapshot.hasData
-                                        ? addlistView(snapshot.data!)
-                                        : EmptyPage(),
+                                  child: EmptyPage(),
                                 )
                               ]);
                             },
