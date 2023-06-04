@@ -27,13 +27,65 @@ class MyDatabase extends _$MyDatabase {
   Future<int> addNoti(NotiCompanion notiCompanion) =>
       into(noti).insert(notiCompanion);
 
+  Future<int> addOrUpdateNoti(NotiCompanion notiCompanion) =>
+      into(noti).insertOnConflictUpdate(notiCompanion);
+
   Stream<List<NotiData>> watchAllNoti() => select(noti).watch();
 
+  MultiSelectable<NotiData> watchPagingNoti(int page,
+          {required int pageSize}) =>
+      select(noti)
+        ..where((t) =>
+            t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))
+        ..limit(pageSize, offset: page);
+
   Stream<List<NotiData>> watchNotNotifiedNoti() => (select(noti)
-        ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))
-  ).watch();
-  // Future<List<NotiData>> watchNotNotifiedNoti() => (select(noti)
-  //   ..where((t) => t.status.equals(false))
-  //   ..where((t) => t.date.isBiggerThanValue(DateTime.now())))
-  //     .get();
+        ..where((t) =>
+            t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now())))
+      .watch();
+
+  Future<int> turnOffNoti(NotiData data) =>
+      (update(noti)..where((tbl) => tbl.id.equals(data.id)))
+          .write(const NotiCompanion(status: Value(true)));
+
+  Future<NotiData> getNoti(int id) =>
+      (select(noti)..where((t) => t.id.equals(id))).getSingle();
+
+  Future<List<NotiData>> getNotNotifiedNotiPagination(int page, int limit) =>
+      (select(noti)
+            ..where((t) =>
+                t.status.equals(false) &
+                t.date.isBiggerThanValue(DateTime.now()))
+            ..limit(limit, offset: (page - 1) * 10)
+            ..orderBy([
+              (t) => OrderingTerm(expression: t.date, mode: OrderingMode.asc)
+            ]))
+          .get();
+
+  Stream<List<NotiData>> getNotNotifiedNotiPaginationStream(int page, int limit) =>
+      (select(noti)
+            ..where((t) =>
+                t.status.equals(false) &
+                t.date.isBiggerThanValue(DateTime.now()))
+            // ..limit(limit, offset: (page - 1) * 10)
+            ..limit(limit * (page + 1))
+            ..orderBy([
+              (t) => OrderingTerm(expression: t.date, mode: OrderingMode.asc)
+            ]))
+          .watch();
+
+// Future<List<NotiData>> getNotNotifiedNotiPagination(int page, int limit) => (select(noti)
+//   ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))..limit(limit, offset: (page - 1) * 10)
+// ).get();
+
+// Stream<List<NotiData>> getNotNotifiedNotiPagination(int page, int limit) => (select(noti)
+//   ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))..limit(limit, offset: (page - 1) * 10)
+// ).watch();
+
+// Future<int> turnOffNoti(int id, NotiCompanion notiCompanion) => (update(noti) ..where((t) => t.id.equals(id))).write(notiCompanion);
+
+// Future<List<NotiData>> watchNotNotifiedNoti() => (select(noti)
+//   ..where((t) => t.status.equals(false))
+//   ..where((t) => t.date.isBiggerThanValue(DateTime.now())))
+//     .get();
 }

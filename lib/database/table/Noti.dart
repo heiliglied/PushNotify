@@ -8,8 +8,8 @@ class Noti extends Table {
   TextColumn get contents => text()();
   BoolColumn get status => boolean()();
 
-  @override
-  List<Set<Column>> get uniqueKeys =>[
-    {title, contents, status}
-  ];
+  // @override
+  // List<Set<Column>> get uniqueKeys =>[
+  //   {title, contents, status}
+  // ];
 }
