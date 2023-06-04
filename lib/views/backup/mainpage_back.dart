@@ -14,38 +14,50 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   Widget emptyPage = EmptyPage();
-  int page = 0;
+  int page = 1;
   int limit = 10;
-  var stream;
-  final ScrollController _scrollController = new ScrollController();
+  bool loading = false, allLoaded = false;
+  final List<Map> list = [];
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        setState(() {
-          page++;
-          stream = newStream();
-        });
-      }
+    fatchList();
+  }
+
+  fatchList() async {
+    if(allLoaded) {
+      return;
+    }
+
+    setState(() {
+      loading = true;
     });
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    stream = newStream();
-  }
+    await Future.delayed(Duration(microseconds: 500));
+    await Provider.of<Database>(context, listen: false).getNotNotifiedNotiPagination(page, limit)?.then((value) =>
+    {
+      value.forEach((element) {
+        list.add(
+            {
+              "id": element.id,
+              "date": element.date,
+              "title": element.title,
+              "contents": element.contents,
+              "status": element.status
+            }
+        );
+      })
+    });
 
-  Stream<List<NotificationData>>? newStream() {
-    return Provider.of<Database>(context, listen: false).getNotNotifiedNotiPaginationStream(page, limit);
+    setState(() {
+      loading = false;
+      allLoaded = list.isEmpty;
+    });
   }
 
   Widget addlistView(List<NotificationData> notiList) {
     return ListView.builder(
-        shrinkWrap: true,
-        controller: _scrollController,
         itemBuilder: (BuildContext context, int index) {
           DateTime date = notiList[index].date;
           String format = DateFormat('yyyy-MM-dd HH:mm').format(date);
@@ -75,6 +87,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(list);
     return Scaffold(
         appBar: AppBar(
           title: Text("푸시 알림"),
@@ -87,29 +100,36 @@ class _MainPageState extends State<MainPage> {
             label: Text("작성하기")),
         body: Column(
           children: [
-            Expanded(
-              child: Container(
-                // color: Colors.grey,
-                margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: StreamBuilder<List<NotificationData>>(
-                  stream: stream,
-                  builder: (context, snapshot) {
+            Container(
+              // color: Colors.grey,
+              margin: EdgeInsets.all(20),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height -
+                  AppBar().preferredSize.height -
+                  (20 * 2) -
+                  MediaQuery.of(context).viewPadding.top,
+              child: Text("a"),
+              /*
+                StreamBuilder<List<NotificationData>?>(
+                stream: Provider.of<Database>(context).getNotNotifiedNotiPagination(page),
+                builder: (context, snapshot) {
+                    if(!snapshot.hasData) {
+                      return Column(children: [
+                        Expanded(
+                          child: EmptyPage(),
+                        )
+                      ]);
+                    }
                     return Column(children: [
                       Expanded(
-                          child: snapshot.hasData
-                              ? addlistView(snapshot.data!)
-                              : emptyPage
+                        child: addlistView(snapshot.data!),
                       )
                     ]);
-                  },
-                ),
+                },
               ),
-              flex: 9,
+                   */
             )
           ],
-        )
-    );
+        ));
   }
 }

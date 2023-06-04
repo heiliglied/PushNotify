@@ -124,10 +124,10 @@ class DetailBottomSheet {
                                       backgroundColor: Colors.black12
                                   ),
                                   onPressed: () async {
-                                    Navigator.pop(context);
                                     updateNoti(context, item.id, NotificationCompanion(
                                       status: Value(true),
                                     ));
+                                    Navigator.pop(context);
                                   }
                               ),
                               Container(

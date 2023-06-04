@@ -7,8 +7,10 @@ class Notification extends Table {
   TextColumn get contents => text()();
   BoolColumn get status => boolean()();
 
+  /*
   @override
   List<Set<Column>> get uniqueKeys =>[
     {title, contents, status}
   ];
+  */
 }

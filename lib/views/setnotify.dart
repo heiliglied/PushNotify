@@ -53,8 +53,6 @@ class _SetNotify extends State<SetNotify> {
     double widgetWidth = MediaQuery.of(context).size.width;
     double widgetHeight = MediaQuery.of(context).size.height;
 
-    print(arguments);
-
     return Scaffold(
       appBar: BaseAppBar("메시지 알리미"),
       endDrawer: BaseDrawer(),

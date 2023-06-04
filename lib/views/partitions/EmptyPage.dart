@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class EmptyPage extends StatelessWidget {
-  EmptyPage({Key? key}) : super(key: key);
+  EmptyPage({Key? key, this.message}) :  super(key: key);
+  final String? message;
 
   Widget emptyWidget = Container(
     child: CustomScrollView(
