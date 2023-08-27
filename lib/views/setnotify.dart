@@ -2,10 +2,10 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:push_notify/libraries/UniDialog.dart';
-import 'package:push_notify/views/partitions/BaseAppBar.dart';
 import 'package:push_notify/views/partitions/BaseDrawer.dart';
 import 'package:push_notify/database/database.dart';
 import 'package:provider/provider.dart';
+import 'package:push_notify/routes.dart';
 
 class SetNotify extends StatefulWidget {
   SetNotify({Key? key}) : super(key: key);
@@ -54,7 +54,15 @@ class _SetNotify extends State<SetNotify> {
     double widgetHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: BaseAppBar("메시지 알리미"),
+      appBar: AppBar(
+        title: Text("메시지 작성"),
+        leading: new IconButton(
+            icon: new Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushNamed(context, Routes.mainPage);
+            }
+        ),
+      ),
       endDrawer: BaseDrawer(),
       body: Column(
         children: [

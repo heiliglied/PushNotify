@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:push_notify/database/database.dart';
+import 'package:push_notify/libraries/CustomRouteObserver.dart';
 import 'package:push_notify/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -11,7 +12,7 @@ void main() {
       create: (context) => Database(),
       child: const Main(),
       dispose: (context, db) => db.close(),
-    )
+    ),
   );
 }
 
@@ -30,6 +31,7 @@ class Main extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('ko', '')],
+      navigatorObservers: [CommonRouteObserver()],
     );
   }
 }

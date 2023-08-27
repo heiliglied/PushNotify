@@ -7,7 +7,7 @@ import 'package:push_notify/database/database.dart';
 import 'package:provider/provider.dart';
 
 class DetailBottomSheet {
-  Future showBottomSheet(BuildContext context, NotificationData item) {
+  Future showBottomSheet(BuildContext context, NotificationData item, int index) {
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -127,7 +127,7 @@ class DetailBottomSheet {
                                     updateNoti(context, item.id, NotificationCompanion(
                                       status: Value(true),
                                     ));
-                                    Navigator.pop(context);
+                                    Navigator.pop(context, index);
                                   }
                               ),
                               Container(
@@ -140,7 +140,7 @@ class DetailBottomSheet {
                                   ),
                                   onPressed: () async {
                                     deleteNoti(context, item.id);
-                                    Navigator.pop(context);
+                                    Navigator.pop(context, index);
                                   }
                               )
                           ],

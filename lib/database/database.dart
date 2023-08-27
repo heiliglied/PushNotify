@@ -23,14 +23,17 @@ class Database extends _$Database {
   ).watch();
 
   Stream<List<NotificationData>>? getNotNotifiedNotiPaginationStream(int page, int limit) => (select(notification)
-    ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))..limit(limit, offset: page * 10)..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.asc)])
+    ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))..limit(limit, offset: page * limit)..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.asc)])
   ).watch();
 
   Future<List<NotificationData>>? getNotNotifiedNotiPagination(int page, int limit) => (select(notification)
-    ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))..limit(limit, offset: page * 10)..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.asc)])
+    ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))..limit(limit, offset: page * limit)..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.asc)])
   ).get();
+
   Future<int> updateNoti(int id, NotificationCompanion notiCompanion) => (update(notification) ..where((t) => t.id.equals(id))).write(notiCompanion);
+
   Future<int> deleteNoti(int id) => (delete(notification) ..where((t) => t.id.equals(id))).go();
+
   Future<NotificationData?> selectNoti(int id) => (select(notification)..where((t) => t.id.equals(id))..limit(1)).getSingleOrNull();
 }
 
