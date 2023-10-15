@@ -35,7 +35,7 @@ class BaseDrawer extends StatelessWidget {
                     ListTile(
                       title: Text('알림 내역'),
                       onTap: () {
-                        Navigator.pushNamed(context, Routes.list, arguments: {"title": "알림 내역"});
+                        Navigator.pushNamed(context, Routes.calendar, arguments: {"title": "알림 내역"});
                       },
                     ),
                     ListTile(

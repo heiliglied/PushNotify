@@ -35,6 +35,11 @@ class Database extends _$Database {
   Future<int> deleteNoti(int id) => (delete(notification) ..where((t) => t.id.equals(id))).go();
 
   Future<NotificationData?> selectNoti(int id) => (select(notification)..where((t) => t.id.equals(id))..limit(1)).getSingleOrNull();
+
+  Future<List<NotificationData>>? selectFirstDate() => (select(notification)..limit(1)..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.asc)])).get();
+
+  Future<List<NotificationData>>? selectLastDate() => (select(notification)..limit(1)..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)])).get();
+
 }
 
 LazyDatabase _openConnection() {

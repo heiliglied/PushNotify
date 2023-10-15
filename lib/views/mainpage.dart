@@ -6,6 +6,7 @@ import 'package:push_notify/database/database.dart';
 import 'package:push_notify/views/partitions/BaseDrawer.dart';
 import 'package:push_notify/views/partitions/EmptyPage.dart';
 import 'package:push_notify/views/modules/DetailBottomSheet.dart';
+import 'package:push_notify/libraries/CustomRouteObserver.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -19,6 +20,8 @@ class _MainPageState extends State<MainPage> {
   bool loading = false, allLoaded = false;
   final List<NotificationData> list = [];
   final ScrollController _scrollController = new ScrollController();
+
+  var navStack = CommonRouteObserver.navStack;
 
   @override
   void initState() {
@@ -158,8 +161,7 @@ class _MainPageState extends State<MainPage> {
             );
           },
         );
-        print(Router.of(context).routerDelegate);
-
+        //print(navStack[1].name);
         return shouldPop!;
       },
     );
