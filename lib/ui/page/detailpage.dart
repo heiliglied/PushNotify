@@ -1,15 +1,14 @@
 import 'package:drift/drift.dart' hide Column;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-// import 'package:get/get.dart' hide Value;
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:push_notify/database/database.dart';
-import 'package:push_notify/database/table/Noti.dart';
-import 'package:push_notify/libraries/UniDialog.dart';
-import 'package:push_notify/views/partitions/BaseDrawer.dart';
+import 'package:push_notify/service/MyService.dart';
+import 'package:push_notify/ui/page/partitions/BaseDrawer.dart';
+import '../../data/database/database.dart';
+import '../../routes.dart';
+import '../libraries/UniDialog.dart';
+import '../route/CommonRouteObserver.dart';
+import 'DetailViewModel.dart';
 
 class DetailArgument {
   final String title;
@@ -25,8 +24,6 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  DateTime selectedDate = DateTime.now();
-  TimeOfDay selectedTime = TimeOfDay.now();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController titleController = TextEditingController();
@@ -34,34 +31,34 @@ class _DetailPageState extends State<DetailPage> {
 
   var _isInit = true;
 
+  final viewModel = locator<DetailViewModel>();
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
-        initialDate: selectedDate,
+        initialDate: viewModel.selectedDate,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-        dateController.text = DateFormat('yyyy-MM-dd').format(picked);
-      });
+    if (picked != null && picked != viewModel.selectedDate) {
+      viewModel.updateSelectedDate(picked);
+      dateController.text = DateFormat('yyyy-MM-dd').format(picked);
     }
   }
 
   Future<void> _selectTime(BuildContext context) async {
     final picked = await showTimePicker(
         context: context,
-        initialTime: selectedTime,
+        initialTime: viewModel.selectedTime,
         builder: (context, child) {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
             child: child ?? Container(),
           );
         });
-    if (picked != null && picked != selectedTime) {
+    if (picked != null && picked != viewModel.selectedTime) {
       print("$picked");
       setState(() {
-        selectedTime = picked;
+        viewModel.updateSelectedTime(picked);
         timeController.text =
             '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
       });
@@ -69,9 +66,7 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Future<int> upsertNotiData(NotiCompanion noti) async {
-    // return Get.find<MyDatabase>().addNoti(noti);
-    return Provider.of<MyDatabase>(context, listen: false)
-        .addOrUpdateNoti(noti);
+    return viewModel.addOrUpdateNoti(noti);
   }
 
   late Object args;
@@ -87,9 +82,7 @@ class _DetailPageState extends State<DetailPage> {
       titleController.text = noti.title;
       contentController.text = noti.contents;
       TimeOfDay savedTime = TimeOfDay.fromDateTime(noti.date);
-      selectedDate = noti.date;
       dateController.text = DateFormat('yyyy-MM-dd').format(noti.date);
-      selectedTime = savedTime;
       timeController.text =
           '${savedTime.hour.toString().padLeft(2, '0')}:${savedTime.minute.toString().padLeft(2, '0')}';
     }
@@ -99,11 +92,22 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    var list = AppNavObserver.navStack;
+    list.forEach((element) {
+      print("${element.name}>");
+    });
+
     return Scaffold(
         appBar: AppBar(
           title: Text("타이틀"),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+            icon: BackButtonIcon(),
+          ),
         ),
-        drawer: BaseDrawer(),
+        endDrawer: BaseDrawer(),
         body: Column(
           children: [
             Expanded(
@@ -159,11 +163,11 @@ class _DetailPageState extends State<DetailPage> {
                       titleController.text.trim() != "" &&
                       contentController.text.trim() != "") {
                     var selected = DateTime(
-                        selectedDate.year,
-                        selectedDate.month,
-                        selectedDate.day,
-                        selectedTime.hour,
-                        selectedTime.minute);
+                        viewModel.selectedDate.year,
+                        viewModel.selectedDate.month,
+                        viewModel.selectedDate.day,
+                        viewModel.selectedTime.hour,
+                        viewModel.selectedTime.minute);
 
                     NotiCompanion data;
                     if (notiId != 0) {
@@ -181,9 +185,15 @@ class _DetailPageState extends State<DetailPage> {
                           status: const Value(false));
                     }
 
-                    upsertNotiData(data)
-                        .then((value) =>
-                            {showToast("저장이 완료되었습니다."), Navigator.pop(context)})
+                    viewModel
+                        .addOrUpdateNoti(data)
+                        .then((value) => {
+                              showToast("저장이 완료되었습니다."),
+                              // Navigator.pop(context, data)
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, Routes.mainPage, (r) => false,
+                                  arguments: {"title": "홈"})
+                            })
                         .onError((error, stackTrace) => {
                               if (error
                                   .toString()

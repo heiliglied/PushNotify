@@ -3,7 +3,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:push_notify/database/table/Noti.dart';
+import 'package:push_notify/data/database/table/Noti.dart';
 
 part 'database.g.dart';
 
@@ -24,25 +24,22 @@ class MyDatabase extends _$MyDatabase {
   @override
   int get schemaVersion => 1;
 
-  Future<int> addNoti(NotiCompanion notiCompanion) =>
-      into(noti).insert(notiCompanion);
-
   Future<int> addOrUpdateNoti(NotiCompanion notiCompanion) =>
       into(noti).insertOnConflictUpdate(notiCompanion);
 
-  Stream<List<NotiData>> watchAllNoti() => select(noti).watch();
+  // Stream<List<NotiData>> watchAllNoti() => select(noti).watch();
 
-  MultiSelectable<NotiData> watchPagingNoti(int page,
-          {required int pageSize}) =>
-      select(noti)
-        ..where((t) =>
-            t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))
-        ..limit(pageSize, offset: page);
+  // MultiSelectable<NotiData> watchPagingNoti(int page,
+  //         {required int pageSize}) =>
+  //     select(noti)
+  //       ..where((t) =>
+  //           t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))
+  //       ..limit(pageSize, offset: page);
 
-  Stream<List<NotiData>> watchNotNotifiedNoti() => (select(noti)
-        ..where((t) =>
-            t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now())))
-      .watch();
+  // Stream<List<NotiData>> watchNotNotifiedNoti() => (select(noti)
+  //       ..where((t) =>
+  //           t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now())))
+  //     .watch();
 
   Future<int> turnOffNoti(NotiData data) =>
       (update(noti)..where((tbl) => tbl.id.equals(data.id)))
@@ -62,17 +59,33 @@ class MyDatabase extends _$MyDatabase {
             ]))
           .get();
 
-  Stream<List<NotiData>> getNotNotifiedNotiPaginationStream(int page, int limit) =>
+  Future<List<NotiData>>? selectDate(String mode) => (select(noti)
+        ..limit(1)
+        ..orderBy(
+            [(t) => OrderingTerm(expression: t.date, mode: OrderingMode.asc)]))
+      .get();
+
+  Stream<List<NotiData>> getNotNotifiedNotiPaginationStream(
+          int page, int limit) =>
       (select(noti)
             ..where((t) =>
                 t.status.equals(false) &
                 t.date.isBiggerThanValue(DateTime.now()))
-            // ..limit(limit, offset: (page - 1) * 10)
             ..limit(limit * (page + 1))
             ..orderBy([
               (t) => OrderingTerm(expression: t.date, mode: OrderingMode.asc)
             ]))
           .watch();
+
+  Stream<List<NotiData>> getNotiDataMonth(DateTime startDay, DateTime endDay) =>
+      (select(noti)..where((t) => t.date.isBetweenValues(startDay, endDay)))
+          .watch();
+
+  // Future<List<NotiData>> getNotiDataMonth(DateTime startDay, DateTime endDay) =>
+  //     (select(noti)..where((t) => t.date.isBetweenValues(startDay, endDay))).get();
+
+  // Stream<List<NotiData>> getNotiDataCalendar() =>
+  //     (select(noti)).watch();
 
 // Future<List<NotiData>> getNotNotifiedNotiPagination(int page, int limit) => (select(noti)
 //   ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))..limit(limit, offset: (page - 1) * 10)

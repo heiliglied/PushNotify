@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -86,7 +85,7 @@ class UniDialog {
             ));
   }
 
-  void _dismiss(context) {
-    Navigator.pop(context);
-  }
+  // void _dismiss(context) {
+  //   Navigator.pop(context);
+  // }
 }

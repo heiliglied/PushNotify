@@ -1,6 +1,6 @@
-import 'package:push_notify/libraries/UniDialog.dart';
 import 'package:push_notify/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:push_notify/ui/libraries/UniDialog.dart';
 
 class BaseDrawer extends StatelessWidget {
   BaseDrawer({Key? key, Widget? child, String? semanticLabel});
@@ -30,8 +30,8 @@ class BaseDrawer extends StatelessWidget {
                     ListTile(
                       title: Text('달력 보기'),
                       onTap: () {
-                        Navigator.pushNamed(context, Routes.mainPage,
-                            arguments: {"title": "메인 페이지"});
+                        Navigator.pushNamed(context, Routes.calendarPage,
+                            arguments: {"title": "달력 보기"});
                       },
                     ),
                     ListTile(

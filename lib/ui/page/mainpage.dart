@@ -1,18 +1,15 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/utils.dart';
-import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-// import 'package:get/get.dart';
-import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:push_notify/routes.dart';
-import 'package:push_notify/views/partitions/BaseDrawer.dart';
-import 'package:push_notify/views/partitions/EmptyList.dart';
+import 'package:push_notify/ui/page/partitions/BaseDrawer.dart';
+import 'package:push_notify/ui/page/partitions/EmptyList.dart';
 
-import '../database/database.dart';
+import '../../data/database/database.dart';
+import '../../service/MyService.dart';
+import '../route/CommonRouteObserver.dart';
+import 'MainViewModel.dart';
+
 
 class MainPage extends StatefulWidget {
   @override
@@ -20,19 +17,19 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int page = 0;
-  int limit = 10;
-  var stream;
   final ScrollController _scrollController = ScrollController();
+  final viewModel = locator<MainViewModel>();
 
   @override
   void initState() {
     super.initState();
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        setState(() => page++);
-        setState(() => stream = newStream());
+        if (!viewModel.allLoaded) {
+          viewModel.updatePage;
+        }
       }
     });
   }
@@ -40,27 +37,30 @@ class _MainPageState extends State<MainPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    stream = newStream();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("타이틀"),
-        ),
-        drawer: BaseDrawer(),
-        floatingActionButton: FloatingActionButton.extended(
-            onPressed: () {
-              Navigator.pushNamed(context, Routes.detailPage);
-            },
-            label: Text("작성하기")),
-        body: _buildBody(context));
-  }
+    var list = AppNavObserver.navStack;
+    list.forEach((element) {
+      print("${element.name}>");
+    });
 
-  Stream<List<NotiData>> newStream() {
-    return Provider.of<MyDatabase>(context, listen: false)
-        .getNotNotifiedNotiPaginationStream(page, limit);
+    return WillPopScope(
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text("타이틀"),
+            ),
+            endDrawer: BaseDrawer(),
+            floatingActionButton: FloatingActionButton.extended(
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.detailPage);
+                },
+                label: Text("작성하기")),
+            body: _buildBody(context)),
+        onWillPop: () async {
+          return false;
+        });
   }
 
   Widget _buildListView(List<NotiData> notiList) {
@@ -179,8 +179,7 @@ class _MainPageState extends State<MainPage> {
                                         backgroundColor:
                                             Colors.lightBlueAccent),
                                     onPressed: () async {
-                                      Provider.of<MyDatabase>(context,
-                                              listen: false)
+                                      viewModel
                                           .getNoti(item.id)
                                           .then((value) => {
                                                 Navigator.pop(context),
@@ -199,8 +198,7 @@ class _MainPageState extends State<MainPage> {
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.redAccent),
                                     onPressed: () async {
-                                      Provider.of<MyDatabase>(context,
-                                              listen: false)
+                                      viewModel
                                           .turnOffNoti(item)
                                           .then((value) => {
                                                 showToast("변경이 완료되었습니다."),
@@ -239,26 +237,32 @@ class _MainPageState extends State<MainPage> {
         ),
         Expanded(
           child: Container(
-            // color: Colors.grey,
-            margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: StreamBuilder<List<NotiData>>(
-              stream: stream,
-              builder: (context, snapshot) {
-                return Column(children: [
-                  Expanded(
-                      child: snapshot.hasData
-                          ? _buildListView(snapshot.data!)
-                          : const EmptyList().build(context))
-                ]);
-              },
-            ),
-          ),
+              // color: Colors.grey,
+              margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: StreamBuilder<List<NotiData>>(
+                stream: viewModel.notiDataStream,
+                builder: (context, snapshot) {
+                  final List<NotiData> data =
+                      snapshot.data?.cast<NotiData>() ?? [];
+                  return Column(
+                    children: [
+                      Expanded(child: _buildContent(context, data)),
+                    ],
+                  );
+                },
+              )),
           flex: 9,
         )
       ],
     );
+  }
+
+  _buildContent(BuildContext context, data) {
+    return viewModel.page == 0 && (data?.length == 0)
+        ? const EmptyList().build(context)
+        : _buildListView(data!);
   }
 
   @override
@@ -266,5 +270,4 @@ class _MainPageState extends State<MainPage> {
     super.dispose();
     _scrollController.dispose();
   }
-
 }

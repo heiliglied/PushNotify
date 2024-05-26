@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:get/get.dart';
-import 'package:provider/provider.dart';
-import 'package:push_notify/database/database.dart';
 import 'package:push_notify/routes.dart';
-// import 'package:intl/date_symbol_data_local.dart';
+import 'package:push_notify/service/MyService.dart';
+import 'package:push_notify/ui/route/CommonRouteObserver.dart';
 
 void main() {
-  runApp(
-    Provider<MyDatabase>(
-      create: (context) => MyDatabase(),
-      child: const Main(),
-      dispose: (context, db) => db.close(),
-    ),
-  );
+  setupLocator();
+  runApp(const Main());
 }
 
 class Main extends StatelessWidget {
@@ -25,6 +18,7 @@ class Main extends StatelessWidget {
     return MaterialApp(
       initialRoute: Routes.mainPage,
       routes: Routes.routes,
+      navigatorObservers: [AppNavObserver()],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
