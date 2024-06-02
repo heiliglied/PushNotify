@@ -1,6 +1,7 @@
 
-import '../data/database/database.dart';
-import '../data/datasource/DataSource.dart';
+import 'package:push_notify/data/database/database.dart';
+import 'package:push_notify/data/datasource/DataSource.dart';
+
 
 class CalendarRepository {
   final DataSource dataSource;

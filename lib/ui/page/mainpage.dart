@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:push_notify/data/database/database.dart';
 import 'package:push_notify/routes.dart';
-import 'package:push_notify/ui/page/partitions/BaseDrawer.dart';
-import 'package:push_notify/ui/page/partitions/EmptyList.dart';
+import 'package:push_notify/service/MyService.dart';
+import 'package:push_notify/ui/common/BaseDrawer.dart';
+import 'package:push_notify/ui/common/EmptyList.dart';
+import 'package:push_notify/ui/page/MainViewModel.dart';
+import 'package:push_notify/ui/route/CommonRouteObserver.dart';
 
-import '../../data/database/database.dart';
-import '../../service/MyService.dart';
-import '../route/CommonRouteObserver.dart';
-import 'MainViewModel.dart';
+
 
 
 class MainPage extends StatefulWidget {

@@ -1,5 +1,5 @@
-import 'package:push_notify/ui/page/calendarpage.dart';
-import 'package:push_notify/ui/page/detailpage.dart';
+import 'package:push_notify/ui/page/calendar/calendarpage.dart';
+import 'package:push_notify/ui/page/detail/detailpage.dart';
 import 'package:push_notify/ui/page/mainpage.dart';
 import 'package:flutter/widgets.dart';
 

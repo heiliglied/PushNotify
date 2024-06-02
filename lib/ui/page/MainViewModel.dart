@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:push_notify/repository/CalendarRepository.dart';
+import 'package:push_notify/data/database/database.dart';
+import 'package:push_notify/data/repository/CalendarRepository.dart';
 
-import '../../data/database/database.dart';
+
 
 
 class MainViewModel {

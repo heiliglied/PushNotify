@@ -1,12 +1,12 @@
 
 import 'package:get_it/get_it.dart';
-import 'package:push_notify/repository/CalendarRepository.dart';
-import 'package:push_notify/ui/page/DetailViewModel.dart';
+import 'package:push_notify/data/database/database.dart';
+import 'package:push_notify/data/datasource/DataSource.dart';
+import 'package:push_notify/data/repository/CalendarRepository.dart';
+import 'package:push_notify/ui/page/MainViewModel.dart';
+import 'package:push_notify/ui/page/calendar/CalendarViewModel.dart';
+import 'package:push_notify/ui/page/detail/DetailViewModel.dart';
 
-import '../data/database/database.dart';
-import '../data/datasource/DataSource.dart';
-import '../ui/page/CalendarViewModel.dart';
-import '../ui/page/MainViewModel.dart';
 
 
 GetIt locator = GetIt.instance;

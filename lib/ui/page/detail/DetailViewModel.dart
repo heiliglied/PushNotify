@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:push_notify/data/database/database.dart';
+import 'package:push_notify/data/repository/CalendarRepository.dart';
 
-import '../../data/database/database.dart';
-import '../../repository/CalendarRepository.dart';
+
 
 class DetailViewModel {
 

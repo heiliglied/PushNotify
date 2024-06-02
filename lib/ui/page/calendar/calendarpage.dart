@@ -2,12 +2,13 @@ import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:push_notify/ui/page/partitions/BaseDrawer.dart';
+import 'package:push_notify/data/database/database.dart';
+import 'package:push_notify/service/MyService.dart';
+import 'package:push_notify/ui/common/BaseDrawer.dart';
+import 'package:push_notify/ui/libraries/CalendarLib.dart';
+import 'package:push_notify/ui/page/calendar/CalendarViewModel.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../../data/database/database.dart';
-import '../../service/MyService.dart';
-import '../libraries/CalendarLib.dart';
-import 'CalendarViewModel.dart';
+
 
 class CalendarPage extends StatefulWidget {
   @override
@@ -15,7 +16,6 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-
   final viewModel = locator<CalendarViewModel>();
 
   void _changePage(DateTime newFocusedDay) {
@@ -26,7 +26,7 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("타이틀"),
+          title: const Text("타이틀"),
           leading: IconButton(
             onPressed: () {
               Navigator.pop(context, true);
@@ -82,5 +82,4 @@ class _CalendarPageState extends State<CalendarPage> {
       ],
     );
   }
-  
 }

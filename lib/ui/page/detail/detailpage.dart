@@ -2,13 +2,14 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:push_notify/data/database/database.dart';
+import 'package:push_notify/routes.dart';
 import 'package:push_notify/service/MyService.dart';
-import 'package:push_notify/ui/page/partitions/BaseDrawer.dart';
-import '../../data/database/database.dart';
-import '../../routes.dart';
-import '../libraries/UniDialog.dart';
-import '../route/CommonRouteObserver.dart';
-import 'DetailViewModel.dart';
+import 'package:push_notify/ui/common/BaseDrawer.dart';
+import 'package:push_notify/ui/libraries/UniDialog.dart';
+import 'package:push_notify/ui/page/detail/DetailViewModel.dart';
+import 'package:push_notify/ui/route/CommonRouteObserver.dart';
+
 
 class DetailArgument {
   final String title;
