@@ -1,51 +1,68 @@
 import 'dart:async';
+import 'dart:collection';
+import 'package:collection/collection.dart';
 
 import 'package:push_notify/data/database/database.dart';
 import 'package:push_notify/data/repository/CalendarRepository.dart';
+import 'package:push_notify/ui/libraries/CalendarLib.dart';
+import 'package:push_notify/ui/page/calendar/CalendarPageUIState.dart';
+import 'package:table_calendar/table_calendar.dart';
 
-
-
-
-class CalendarViewModel{
+class CalendarViewModel {
   final CalendarRepository repository;
+  final _uiStateController = StreamController<CalendarPageUIState>.broadcast();
 
-  final StreamController<List<NotiData>> _notiStreamController = StreamController.broadcast();
-  Stream<List<NotiData>> get notiDataStream => _notiStreamController.stream;
+  CalendarPageUIState _uiState = CalendarPageUIState(
+    focusedDay: DateTime.now(),
+    kEvent: LinkedHashMap<DateTime, List<NotiData>>(),
+    isSelected: [true, false],
+  );
 
-  DateTime _focusedDay = DateTime.now();
-  DateTime get focusedDay => _focusedDay;
+  CalendarPageUIState get uiState => _uiState;
 
-  List<bool> _isSelected = [true, false];
-  List<bool> get isSelected => _isSelected;
+  Stream<CalendarPageUIState> get uiStateStream => _uiStateController.stream;
 
   CalendarViewModel(this.repository) {
-    loadNotiDataForMonth(_focusedDay);
+    loadNotiDataForMonth(_uiState.focusedDay);
+  }
+
+  void _updateState(CalendarPageUIState newState) {
+    _uiState = newState;
+    _uiStateController.sink.add(_uiState);
   }
 
   void loadNotiDataForMonth(DateTime date) {
-    repository.getDataByMonthList(date).listen((data) {
-      _notiStreamController.add(data);
+    repository.getDataByMonthList(date).listen((list) {
+      Map<DateTime, List<NotiData>> map = groupBy(
+          list, (NotiData data) =>
+              DateTime(data.date.year, data.date.month, data.date.day));
+
+      LinkedHashMap<DateTime, List<NotiData>> newKEvent = LinkedHashMap<DateTime, List<NotiData>>(
+        equals: isSameDay,
+        hashCode: getHashCode,
+      )..addAll(map);
+      print("loadNotiDataForMonth >>>>> $newKEvent");
+
+      _updateState(_uiState.copyWith(kEvent: newKEvent));
     });
   }
 
-  void updateFocusdDay(DateTime newFocusedDay) {
-    _focusedDay = newFocusedDay;
+  void notifyPageChange(DateTime newFocusedDay) {
+    _uiState = _uiState.copyWith(focusedDay: newFocusedDay);
     loadNotiDataForMonth(newFocusedDay);
   }
 
-  void toggleSelect(int value) {
-    var result = <bool>[];
-    for (int i = 0; i < isSelected.length; i++) {
-      if (i == value) {
-        result.add(true);
-      } else {
-        result.add(false);
-      }
+  void notifyFocusedDay(DateTime newFocusedDay) {
+    bool getNewNotiData = uiState.focusedDay.month != newFocusedDay.month;
+    _uiState = _uiState.copyWith(focusedDay: newFocusedDay);
+    if (getNewNotiData) {
+      loadNotiDataForMonth(newFocusedDay);
     }
-    _isSelected = result;
   }
 
-  void dispose() {
-    _notiStreamController.close();
+  void toggleSelect(int value) {
+    List<bool> newIsSelected =
+        List.generate(_uiState.isSelected.length, (i) => i == value);
+    _updateState(_uiState.copyWith(isSelected: newIsSelected));
   }
 }

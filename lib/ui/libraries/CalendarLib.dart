@@ -17,10 +17,11 @@ int getHashCode(DateTime key) {
 }
 
 class CalendarLib extends StatefulWidget {
-  const CalendarLib({Key? key, required this.focusedDay, required this.kEvents, required this.notifyPageChange}) : super(key: key);
+  const CalendarLib({Key? key, required this.focusedDay, required this.kEvents, required this.notifyPageChange, required this.notifyFocusedChange}) : super(key: key);
   final DateTime focusedDay;
   final LinkedHashMap<DateTime, List<NotiData>> kEvents;
   final Function(DateTime) notifyPageChange;
+  final Function(DateTime) notifyFocusedChange;
 
   @override
   State<StatefulWidget> createState() => _CalendarLibState();
@@ -31,7 +32,6 @@ class _CalendarLibState extends State<CalendarLib> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   late LinkedHashMap<DateTime, List<NotiData>> _currentEvents;
   DateTime? _selectedDay;
-  DateTime? _focusedDay;
 
   @override
   void initState() {
@@ -112,7 +112,7 @@ class _CalendarLibState extends State<CalendarLib> {
           onDaySelected: (selectedDay, focusedDay) {
             setState(() {
               _selectedDay = selectedDay;
-              _focusedDay = focusedDay;
+              widget.notifyFocusedChange(focusedDay);
             });
             _selectedEvents.value = _getEventsForDay(selectedDay);
           },
