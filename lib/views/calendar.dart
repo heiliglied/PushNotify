@@ -1,11 +1,11 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:push_notify/routes.dart';
 import 'package:push_notify/database/database.dart';
 import 'package:push_notify/views/partitions/BaseDrawer.dart';
-import 'package:push_notify/views/partitions/EmptyPage.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:push_notify/libraries/GetDateList.dart';
+import 'package:push_notify/libraries/CalendarWidget.dart';
+import 'package:collection/collection.dart';
 
 class CalendarView extends StatefulWidget {
   @override
@@ -13,15 +13,27 @@ class CalendarView extends StatefulWidget {
 }
 
 class _CalendarView extends State<CalendarView> {
-  String result = '';
   @override
   void initState() {
     super.initState();
   }
 
+  final _uniqueCalendarKey = UniqueKey();
+  DateTime now = DateTime.now();
+  late Widget calendarWidget;
+
   @override
   Widget build(BuildContext context) {
+    /*
+    Map calendarSet = initializeCalendar(2024, now.month);
+    String toDate = now.day.toString().padLeft(2, '0');
+    String calendarDate = now.year.toString() + '-' + now.month.toString();
+    Future<List> calendar = callCalendar(context);
+    */
+    calendarWidget = CalendarWidget(date: DateTime.now(), callBack: callBack);
+
     return Scaffold(
+        key: _uniqueCalendarKey,
         appBar: AppBar(
           title: Text("알림 내역"),
         ),
@@ -31,12 +43,12 @@ class _CalendarView extends State<CalendarView> {
             Container(
               height: 60,
               decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(
-                      color: Colors.lightBlue,
-                      width: 2,
-                    )
-                )
+                  border: Border(
+                      bottom: BorderSide(
+                        color: Colors.lightBlue,
+                        width: 2,
+                      )
+                  )
               ),
               child: ToggleButtons(
                 borderWidth: 0,
@@ -64,41 +76,41 @@ class _CalendarView extends State<CalendarView> {
               )
             ),
             Container(
-                child: TableCalendar(
-                    locale: 'ko-KR',
-                    focusedDay: DateTime.now(),
-                    firstDay: DateTime.parse('2022-01-01'),
-                    lastDay: DateTime.parse('2023-12-23'),
-                    calendarFormat: CalendarFormat.month,
-                    headerStyle: HeaderStyle(
-                      titleCentered: true,
-                      titleTextFormatter: (date, locale) =>
-                          DateFormat.yMMMMd(locale).format(date),
-                      formatButtonVisible: false,
-                      titleTextStyle: const TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.blue,
-                      ),
-                      headerPadding: const EdgeInsets.symmetric(vertical: 4.0),
-                      leftChevronIcon: const Icon(
-                        Icons.arrow_left,
-                        size: 40.0,
-                      ),
-                      rightChevronIcon: const Icon(
-                        Icons.arrow_right,
-                        size: 40.0,
-                      ),
-                    ),
-                )
+              child: calendarWidget //widget 반환
             ),
             Expanded(
               child: Container(
-
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      //calendarWidget = CalendarWidget(date: DateTime(2024, 3, 1), callBack(null));
+                      //print('aa!');
+                    });
+                  },
+                  child: Text("버튼!"),
+                ),
               ),
             ),
           ],
         )
     );
   }
+
+  callBack(DateTime? change) {
+    if(change != null) {
+      setState(() {
+        calendarWidget = CalendarWidget(date: DateTime(change.year, change.month, change.day), callBack: callBack(change));
+      });
+    }
+  }
+
+  Future<List> callCalendar(BuildContext context) async {
+    List defaultCalendar = await GetDateList().defaultAlertCalender(context) as List;
+    return [
+      defaultCalendar[0],
+      defaultCalendar[1],
+      defaultCalendar[2],
+      defaultCalendar[3],
+    ];
+  }
 }
-//https://velog.io/@1984/Flutter-toggle-button%EC%9D%84-%EB%84%A4%EB%B9%84%EA%B2%8C%EC%9D%B4%EC%85%98-%EB%B0%94%EC%B2%98%EB%9F%BC-%EB%A7%8C%EB%93%A4%EC%96%B4%EB%B3%B4%EC%9E%90

@@ -40,6 +40,7 @@ class Database extends _$Database {
 
   Future<List<NotificationData>>? selectLastDate() => (select(notification)..limit(1)..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)])).get();
 
+  Future<List<NotificationData>> monthNotifyList(DateTime startdate, DateTime lastdate) => (select(notification)..where((t) => t.date.isBetweenValues(startdate, lastdate))).get();
 }
 
 LazyDatabase _openConnection() {
