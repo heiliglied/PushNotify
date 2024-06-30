@@ -11,6 +11,12 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'db.sqlite'));
+
+    // 기존 파일 삭제 (개발 중에만 사용)
+    if (await file.exists()) {
+      await file.delete();
+    }
+
     return NativeDatabase(file);
   });
 }
@@ -24,22 +30,15 @@ class MyDatabase extends _$MyDatabase {
   @override
   int get schemaVersion => 1;
 
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (Migrator m) async {
+      await m.createAll();
+    },
+  );
+
   Future<int> addOrUpdateNoti(NotiCompanion notiCompanion) =>
       into(noti).insertOnConflictUpdate(notiCompanion);
-
-  // Stream<List<NotiData>> watchAllNoti() => select(noti).watch();
-
-  // MultiSelectable<NotiData> watchPagingNoti(int page,
-  //         {required int pageSize}) =>
-  //     select(noti)
-  //       ..where((t) =>
-  //           t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))
-  //       ..limit(pageSize, offset: page);
-
-  // Stream<List<NotiData>> watchNotNotifiedNoti() => (select(noti)
-  //       ..where((t) =>
-  //           t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now())))
-  //     .watch();
 
   Future<int> turnOffNoti(NotiData data) =>
       (update(noti)..where((tbl) => tbl.id.equals(data.id)))
@@ -48,16 +47,6 @@ class MyDatabase extends _$MyDatabase {
   Future<NotiData> getNoti(int id) =>
       (select(noti)..where((t) => t.id.equals(id))).getSingle();
 
-  Future<List<NotiData>> getNotNotifiedNotiPagination(int page, int limit) =>
-      (select(noti)
-            ..where((t) =>
-                t.status.equals(false) &
-                t.date.isBiggerThanValue(DateTime.now()))
-            ..limit(limit, offset: (page - 1) * 10)
-            ..orderBy([
-              (t) => OrderingTerm(expression: t.date, mode: OrderingMode.asc)
-            ]))
-          .get();
 
   Future<List<NotiData>>? selectDate(String mode) => (select(noti)
         ..limit(1)
@@ -81,24 +70,4 @@ class MyDatabase extends _$MyDatabase {
       (select(noti)..where((t) => t.date.isBetweenValues(startDay, endDay)))
           .watch();
 
-  // Future<List<NotiData>> getNotiDataMonth(DateTime startDay, DateTime endDay) =>
-  //     (select(noti)..where((t) => t.date.isBetweenValues(startDay, endDay))).get();
-
-  // Stream<List<NotiData>> getNotiDataCalendar() =>
-  //     (select(noti)).watch();
-
-// Future<List<NotiData>> getNotNotifiedNotiPagination(int page, int limit) => (select(noti)
-//   ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))..limit(limit, offset: (page - 1) * 10)
-// ).get();
-
-// Stream<List<NotiData>> getNotNotifiedNotiPagination(int page, int limit) => (select(noti)
-//   ..where((t) => t.status.equals(false) & t.date.isBiggerThanValue(DateTime.now()))..limit(limit, offset: (page - 1) * 10)
-// ).watch();
-
-// Future<int> turnOffNoti(int id, NotiCompanion notiCompanion) => (update(noti) ..where((t) => t.id.equals(id))).write(notiCompanion);
-
-// Future<List<NotiData>> watchNotNotifiedNoti() => (select(noti)
-//   ..where((t) => t.status.equals(false))
-//   ..where((t) => t.date.isBiggerThanValue(DateTime.now())))
-//     .get();
 }

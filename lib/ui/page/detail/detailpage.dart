@@ -185,7 +185,7 @@ class _DetailPageState extends State<DetailPage> {
                           contents: Value(contentController.text),
                           status: const Value(false));
                     }
-
+                    debugPrint("$data");
                     viewModel
                         .addOrUpdateNoti(data)
                         .then((value) => {
@@ -201,7 +201,10 @@ class _DetailPageState extends State<DetailPage> {
                                   .contains("SqliteException(2067)"))
                                 {showToast("이미 등록된 날짜입니다.")}
                               else
-                                {showToast("등록에 실패했습니다.")}
+                                {
+                                  debugPrint("$error"),
+                                  showToast("등록에 실패했습니다.")
+                                }
                             });
                   } else {
                     UniDialog.dialog(context,
