@@ -3,16 +3,18 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarWidget extends StatelessWidget {
-  final _uniqueCalendarKey = UniqueKey();
+  //final _uniqueCalendarKey = UniqueKey();
   final DateTime date;
   final Function callBack;
+
   CalendarWidget({required this.date, required this.callBack});
 
   @override
   Widget build(BuildContext context) {
+    print(date); //날짜 제대로 못받아옴.
     Map calendarSet = initializeCalendar(date.year, date.month, date.day);
     return TableCalendar(
-      key: _uniqueCalendarKey,
+      //key: _uniqueCalendarKey,
       locale: 'ko-KR',
       focusedDay: DateTime.parse(calendarSet['toMonth']),
       firstDay: DateTime.parse(calendarSet['preMonth']),

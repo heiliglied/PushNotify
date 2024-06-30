@@ -2,15 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalendarWidget extends StatelessWidget {
-  final _uniqueCalendarKey = UniqueKey();
+class CalendarWidget extends StatefulWidget {
   final DateTime date;
   final Function callBack;
   CalendarWidget({required this.date, required this.callBack});
 
   @override
+  _CalendarWidgetState createState() => _CalendarWidgetState();
+}
+
+class _CalendarWidgetState extends State<CalendarWidget> {
+  final _uniqueCalendarKey = UniqueKey();
+
+  @override
   Widget build(BuildContext context) {
-    Map calendarSet = initializeCalendar(date.year, date.month, date.day);
+    print(widget.date); //날짜 제대로 받아옴.
+    Map calendarSet = initializeCalendar(widget.date.year, widget.date.month, widget.date.day);
     return TableCalendar(
       key: _uniqueCalendarKey,
       locale: 'ko-KR',
@@ -37,8 +44,9 @@ class CalendarWidget extends StatelessWidget {
           size: 40.0,
         ),
       ),
+
       onPageChanged: (focusDay) {
-        callBack(focusDay);
+        widget.callBack(focusDay);
       },
     );
   }

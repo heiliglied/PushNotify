@@ -98,8 +98,11 @@ class _CalendarView extends State<CalendarView> {
 
   callBack(DateTime? change) {
     if(change != null) {
+      //print(DateTime(change.year, change.month, change.day));
       setState(() {
-        calendarWidget = CalendarWidget(date: DateTime(change.year, change.month, change.day), callBack: callBack(change));
+        //로딩 시 focus가 초기 데이터에서 변하지 않는 문제 해결 필요.
+        //※ 콜백 함수에 파라미터를 넘기면 람다로 해석되어 재귀 되어버림.
+        calendarWidget = new CalendarWidget(date: DateTime(change.year, change.month, change.day), callBack: callBack);
       });
     }
   }
