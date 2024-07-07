@@ -2,11 +2,114 @@
 
 part of 'database.dart';
 
-// **************************************************************************
-// DriftDatabaseGenerator
-// **************************************************************************
-
 // ignore_for_file: type=lint
+class $NotiTable extends Noti with TableInfo<$NotiTable, NotiData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NotiTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+      'date', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _contentsMeta =
+      const VerificationMeta('contents');
+  @override
+  late final GeneratedColumn<String> contents = GeneratedColumn<String>(
+      'contents', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<bool> status = GeneratedColumn<bool>(
+      'status', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("status" IN (0, 1))'));
+  @override
+  List<GeneratedColumn> get $columns => [id, date, title, contents, status];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'noti';
+  @override
+  VerificationContext validateIntegrity(Insertable<NotiData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('contents')) {
+      context.handle(_contentsMeta,
+          contents.isAcceptableOrUnknown(data['contents']!, _contentsMeta));
+    } else if (isInserting) {
+      context.missing(_contentsMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  NotiData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NotiData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      date: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      contents: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}contents'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}status'])!,
+    );
+  }
+
+  @override
+  $NotiTable createAlias(String alias) {
+    return $NotiTable(attachedDatabase, alias);
+  }
+}
+
 class NotiData extends DataClass implements Insertable<NotiData> {
   final int id;
   final DateTime date;
@@ -189,118 +292,163 @@ class NotiCompanion extends UpdateCompanion<NotiData> {
   }
 }
 
-class $NotiTable extends Noti with TableInfo<$NotiTable, NotiData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $NotiTable(this.attachedDatabase, [this._alias]);
-  final VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
-  final VerificationMeta _dateMeta = const VerificationMeta('date');
-  @override
-  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
-      'date', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: true,
-      defaultConstraints: 'UNIQUE');
-  final VerificationMeta _titleMeta = const VerificationMeta('title');
-  @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-      'title', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  final VerificationMeta _contentsMeta = const VerificationMeta('contents');
-  @override
-  late final GeneratedColumn<String> contents = GeneratedColumn<String>(
-      'contents', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  final VerificationMeta _statusMeta = const VerificationMeta('status');
-  @override
-  late final GeneratedColumn<bool> status = GeneratedColumn<bool>(
-      'status', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: true,
-      defaultConstraints: 'CHECK (status IN (0, 1))');
-  @override
-  List<GeneratedColumn> get $columns => [id, date, title, contents, status];
-  @override
-  String get aliasedName => _alias ?? 'noti';
-  @override
-  String get actualTableName => 'noti';
-  @override
-  VerificationContext validateIntegrity(Insertable<NotiData> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('date')) {
-      context.handle(
-          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
-    } else if (isInserting) {
-      context.missing(_dateMeta);
-    }
-    if (data.containsKey('title')) {
-      context.handle(
-          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
-    } else if (isInserting) {
-      context.missing(_titleMeta);
-    }
-    if (data.containsKey('contents')) {
-      context.handle(_contentsMeta,
-          contents.isAcceptableOrUnknown(data['contents']!, _contentsMeta));
-    } else if (isInserting) {
-      context.missing(_contentsMeta);
-    }
-    if (data.containsKey('status')) {
-      context.handle(_statusMeta,
-          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
-    } else if (isInserting) {
-      context.missing(_statusMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  List<Set<GeneratedColumn>> get uniqueKeys => [
-        {title, contents, status},
-      ];
-  @override
-  NotiData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return NotiData(
-      id: attachedDatabase.options.types
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      date: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
-      title: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      contents: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}contents'])!,
-      status: attachedDatabase.options.types
-          .read(DriftSqlType.bool, data['${effectivePrefix}status'])!,
-    );
-  }
-
-  @override
-  $NotiTable createAlias(String alias) {
-    return $NotiTable(attachedDatabase, alias);
-  }
-}
-
 abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(e);
+  _$MyDatabaseManager get managers => _$MyDatabaseManager(this);
   late final $NotiTable noti = $NotiTable(this);
   @override
-  Iterable<TableInfo<Table, dynamic>> get allTables =>
+  Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [noti];
+}
+
+typedef $$NotiTableInsertCompanionBuilder = NotiCompanion Function({
+  Value<int> id,
+  required DateTime date,
+  required String title,
+  required String contents,
+  required bool status,
+});
+typedef $$NotiTableUpdateCompanionBuilder = NotiCompanion Function({
+  Value<int> id,
+  Value<DateTime> date,
+  Value<String> title,
+  Value<String> contents,
+  Value<bool> status,
+});
+
+class $$NotiTableTableManager extends RootTableManager<
+    _$MyDatabase,
+    $NotiTable,
+    NotiData,
+    $$NotiTableFilterComposer,
+    $$NotiTableOrderingComposer,
+    $$NotiTableProcessedTableManager,
+    $$NotiTableInsertCompanionBuilder,
+    $$NotiTableUpdateCompanionBuilder> {
+  $$NotiTableTableManager(_$MyDatabase db, $NotiTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$NotiTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$NotiTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$NotiTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<DateTime> date = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> contents = const Value.absent(),
+            Value<bool> status = const Value.absent(),
+          }) =>
+              NotiCompanion(
+            id: id,
+            date: date,
+            title: title,
+            contents: contents,
+            status: status,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            required DateTime date,
+            required String title,
+            required String contents,
+            required bool status,
+          }) =>
+              NotiCompanion.insert(
+            id: id,
+            date: date,
+            title: title,
+            contents: contents,
+            status: status,
+          ),
+        ));
+}
+
+class $$NotiTableProcessedTableManager extends ProcessedTableManager<
+    _$MyDatabase,
+    $NotiTable,
+    NotiData,
+    $$NotiTableFilterComposer,
+    $$NotiTableOrderingComposer,
+    $$NotiTableProcessedTableManager,
+    $$NotiTableInsertCompanionBuilder,
+    $$NotiTableUpdateCompanionBuilder> {
+  $$NotiTableProcessedTableManager(super.$state);
+}
+
+class $$NotiTableFilterComposer extends FilterComposer<_$MyDatabase, $NotiTable> {
+  $$NotiTableFilterComposer(super.$state);
+
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column as Expression<int>, joinBuilders: joinBuilders)
+  );
+
+  ColumnFilters<DateTime> get date => $state.composableBuilder(
+      column: $state.table.date,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column as Expression<DateTime>, joinBuilders: joinBuilders)
+  );
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column as Expression<String>, joinBuilders: joinBuilders)
+  );
+
+  ColumnFilters<String> get contents => $state.composableBuilder(
+      column: $state.table.contents,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column as Expression<String>, joinBuilders: joinBuilders)
+  );
+
+  ColumnFilters<bool> get status => $state.composableBuilder(
+      column: $state.table.status,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column as Expression<bool>, joinBuilders: joinBuilders)
+  );
+}
+
+class $$NotiTableOrderingComposer extends OrderingComposer<_$MyDatabase, $NotiTable> {
+  $$NotiTableOrderingComposer(super.$state);
+
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column as Expression<int>, joinBuilders: joinBuilders)
+  );
+
+  ColumnOrderings<DateTime> get date => $state.composableBuilder(
+      column: $state.table.date,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column as Expression<DateTime>, joinBuilders: joinBuilders)
+  );
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column as Expression<String>, joinBuilders: joinBuilders)
+  );
+
+  ColumnOrderings<String> get contents => $state.composableBuilder(
+      column: $state.table.contents,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column as Expression<String>, joinBuilders: joinBuilders)
+  );
+
+  ColumnOrderings<bool> get status => $state.composableBuilder(
+      column: $state.table.status,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column as Expression<bool>, joinBuilders: joinBuilders)
+  );
+}
+
+class _$MyDatabaseManager {
+  final _$MyDatabase _db;
+  _$MyDatabaseManager(this._db);
+  $$NotiTableTableManager get noti => $$NotiTableTableManager(_db, _db.noti);
 }
