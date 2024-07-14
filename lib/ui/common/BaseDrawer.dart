@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:push_notify/ui/libraries/UniDialog.dart';
 
 class BaseDrawer extends StatelessWidget {
-  BaseDrawer({Key? key, Widget? child, String? semanticLabel});
+  const BaseDrawer({super.key, Key? key2, Widget? child, String? semanticLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -11,31 +11,31 @@ class BaseDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          Container(
+          const SizedBox(
             height: 80,
             child: DrawerHeader(child: Text("부가기능")),
           ),
-          Container(
+          SizedBox(
               height: MediaQuery.of(context).size.height - 180,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
                     ListTile(
-                      title: Text('알림 보기'),
+                      title: const Text('알림 보기'),
                       onTap: () {
                         Navigator.pushNamed(context, Routes.mainPage,
                             arguments: {"title": "메인 페이지"});
                       },
                     ),
                     ListTile(
-                      title: Text('달력 보기'),
+                      title: const Text('달력 보기'),
                       onTap: () {
                         Navigator.pushNamed(context, Routes.calendarPage,
                             arguments: {"title": "달력 보기"});
                       },
                     ),
                     ListTile(
-                      title: Text('신규 알림 추가'),
+                      title: const Text('신규 알림 추가'),
                       onTap: () {
                         Navigator.pushNamed(context, Routes.mainPage,
                             arguments: {"title": "메인 페이지"});
@@ -44,13 +44,13 @@ class BaseDrawer extends StatelessWidget {
                   ],
                 ),
               )),
-          Container(
+          SizedBox(
               height: 80,
               child: Column(
                 children: <Widget>[
-                  Divider(),
+                  const Divider(),
                   ListTile(
-                    title: Text("종료"),
+                    title: const Text("종료"),
                     onTap: () {
                       UniDialog.dialog(context,
                           title: "종료",

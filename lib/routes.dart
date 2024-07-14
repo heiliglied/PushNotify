@@ -11,8 +11,8 @@ class Routes {
   static const String calendarPage = "/calendar";
 
   static final routes = <String, WidgetBuilder>{
-    mainPage: (BuildContext context) => MainPage(),
-    detailPage: (BuildContext context) => DetailPage(),
-    calendarPage: (BuildContext context) => CalendarPage()
+    mainPage: (BuildContext context) => const MainPage(),
+    detailPage: (BuildContext context) => const DetailPage(),
+    calendarPage: (BuildContext context) => const CalendarPage()
   };
 }

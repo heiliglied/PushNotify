@@ -26,7 +26,7 @@ class _CalendarPageState extends State<CalendarPage> {
             icon: const BackButtonIcon(),
           ),
         ),
-        endDrawer: BaseDrawer(),
+        endDrawer: const BaseDrawer(),
         body: _buildBody(context));
   }
 

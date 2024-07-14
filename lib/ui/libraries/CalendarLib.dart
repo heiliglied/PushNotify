@@ -8,8 +8,8 @@ import '../../data/database/database.dart';
 
 
 
-final DateTime _firstDay = DateTime.now().subtract(Duration(days: 365));
-final DateTime _lastDay = DateTime.now().add(Duration(days: 365 * 2));
+final DateTime _firstDay = DateTime.now().subtract(const Duration(days: 365));
+final DateTime _lastDay = DateTime.now().add(const Duration(days: 365 * 2));
 
 
 int getHashCode(DateTime key) {
@@ -123,7 +123,7 @@ class _CalendarLibState extends State<CalendarLib> {
           },
           onPageChanged: (day) async {
             widget.notifyPageChange(day);
-            print("onPageChanged >> day : ${day}");
+            print("onPageChanged >> day : $day");
           },
         ),
         const SizedBox(height: 8.0),

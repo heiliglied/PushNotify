@@ -20,6 +20,8 @@ class DetailArgument {
 }
 
 class DetailPage extends StatefulWidget {
+  const DetailPage({super.key});
+
   @override
   _DetailPageState createState() => _DetailPageState();
 }
@@ -94,27 +96,27 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     var list = AppNavObserver.navStack;
-    list.forEach((element) {
+    for (var element in list) {
       print("${element.name}>");
-    });
+    }
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("타이틀"),
+          title: const Text("타이틀"),
           leading: IconButton(
             onPressed: () {
               Navigator.pop(context, true);
             },
-            icon: BackButtonIcon(),
+            icon: const BackButtonIcon(),
           ),
         ),
-        endDrawer: BaseDrawer(),
+        endDrawer: const BaseDrawer(),
         body: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
                   child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
                     const Text("알람 등록", style: TextStyle(fontSize: 20)),

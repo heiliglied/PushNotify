@@ -179,6 +179,16 @@ class NotiData extends DataClass implements Insertable<NotiData> {
         contents: contents ?? this.contents,
         status: status ?? this.status,
       );
+  NotiData copyWithCompanion(NotiCompanion data) {
+    return NotiData(
+      id: data.id.present ? data.id.value : this.id,
+      date: data.date.present ? data.date.value : this.date,
+      title: data.title.present ? data.title.value : this.title,
+      contents: data.contents.present ? data.contents.value : this.contents,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('NotiData(')
@@ -294,7 +304,7 @@ class NotiCompanion extends UpdateCompanion<NotiData> {
 
 abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(e);
-  _$MyDatabaseManager get managers => _$MyDatabaseManager(this);
+  $MyDatabaseManager get managers => $MyDatabaseManager(this);
   late final $NotiTable noti = $NotiTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -303,7 +313,7 @@ abstract class _$MyDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [noti];
 }
 
-typedef $$NotiTableInsertCompanionBuilder = NotiCompanion Function({
+typedef $$NotiTableCreateCompanionBuilder = NotiCompanion Function({
   Value<int> id,
   required DateTime date,
   required String title,
@@ -324,8 +334,7 @@ class $$NotiTableTableManager extends RootTableManager<
     NotiData,
     $$NotiTableFilterComposer,
     $$NotiTableOrderingComposer,
-    $$NotiTableProcessedTableManager,
-    $$NotiTableInsertCompanionBuilder,
+    $$NotiTableCreateCompanionBuilder,
     $$NotiTableUpdateCompanionBuilder> {
   $$NotiTableTableManager(_$MyDatabase db, $NotiTable table)
       : super(TableManagerState(
@@ -335,8 +344,7 @@ class $$NotiTableTableManager extends RootTableManager<
               $$NotiTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$NotiTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$NotiTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime> date = const Value.absent(),
             Value<String> title = const Value.absent(),
@@ -350,7 +358,7 @@ class $$NotiTableTableManager extends RootTableManager<
             contents: contents,
             status: status,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required DateTime date,
             required String title,
@@ -367,88 +375,68 @@ class $$NotiTableTableManager extends RootTableManager<
         ));
 }
 
-class $$NotiTableProcessedTableManager extends ProcessedTableManager<
-    _$MyDatabase,
-    $NotiTable,
-    NotiData,
-    $$NotiTableFilterComposer,
-    $$NotiTableOrderingComposer,
-    $$NotiTableProcessedTableManager,
-    $$NotiTableInsertCompanionBuilder,
-    $$NotiTableUpdateCompanionBuilder> {
-  $$NotiTableProcessedTableManager(super.$state);
-}
-
-class $$NotiTableFilterComposer extends FilterComposer<_$MyDatabase, $NotiTable> {
+class $$NotiTableFilterComposer
+    extends FilterComposer<_$MyDatabase, $NotiTable> {
   $$NotiTableFilterComposer(super.$state);
 
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column as Expression<int>, joinBuilders: joinBuilders)
-  );
+      builder: (Expression<int> column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<DateTime> get date => $state.composableBuilder(
       column: $state.table.date,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column as Expression<DateTime>, joinBuilders: joinBuilders)
-  );
+      builder: (Expression<DateTime> column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<String> get title => $state.composableBuilder(
       column: $state.table.title,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column as Expression<String>, joinBuilders: joinBuilders)
-  );
+      builder: (Expression<String> column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<String> get contents => $state.composableBuilder(
       column: $state.table.contents,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column as Expression<String>, joinBuilders: joinBuilders)
-  );
+      builder: (Expression<String> column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<bool> get status => $state.composableBuilder(
       column: $state.table.status,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column as Expression<bool>, joinBuilders: joinBuilders)
-  );
+      builder: (Expression<bool> column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $$NotiTableOrderingComposer extends OrderingComposer<_$MyDatabase, $NotiTable> {
+class $$NotiTableOrderingComposer
+    extends OrderingComposer<_$MyDatabase, $NotiTable> {
   $$NotiTableOrderingComposer(super.$state);
 
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column as Expression<int>, joinBuilders: joinBuilders)
-  );
+      builder: (Expression<int> column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<DateTime> get date => $state.composableBuilder(
       column: $state.table.date,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column as Expression<DateTime>, joinBuilders: joinBuilders)
-  );
+      builder: (Expression<DateTime> column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<String> get title => $state.composableBuilder(
       column: $state.table.title,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column as Expression<String>, joinBuilders: joinBuilders)
-  );
+      builder: (Expression<String> column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<String> get contents => $state.composableBuilder(
       column: $state.table.contents,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column as Expression<String>, joinBuilders: joinBuilders)
-  );
+      builder: (Expression<String> column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<bool> get status => $state.composableBuilder(
       column: $state.table.status,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column as Expression<bool>, joinBuilders: joinBuilders)
-  );
+      builder: (Expression<bool> column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-class _$MyDatabaseManager {
+class $MyDatabaseManager {
   final _$MyDatabase _db;
-  _$MyDatabaseManager(this._db);
+  $MyDatabaseManager(this._db);
   $$NotiTableTableManager get noti => $$NotiTableTableManager(_db, _db.noti);
 }

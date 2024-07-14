@@ -6,8 +6,8 @@ class EmptyList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: const [Text("데이터가 존재하지 않습니다.")],
+    return const Column(
+      children: [Text("데이터가 존재하지 않습니다.")],
     );
   }
 }

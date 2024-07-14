@@ -13,6 +13,8 @@ import 'package:push_notify/ui/route/CommonRouteObserver.dart';
 
 
 class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
   @override
   State<StatefulWidget> createState() => _MainPageState();
 }
@@ -43,21 +45,21 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     var list = AppNavObserver.navStack;
-    list.forEach((element) {
+    for (var element in list) {
       print("${element.name}>");
-    });
+    }
 
     return WillPopScope(
         child: Scaffold(
             appBar: AppBar(
-              title: Text("타이틀"),
+              title: const Text("타이틀"),
             ),
-            endDrawer: BaseDrawer(),
+            endDrawer: const BaseDrawer(),
             floatingActionButton: FloatingActionButton.extended(
                 onPressed: () {
                   Navigator.pushNamed(context, Routes.detailPage);
                 },
-                label: Text("작성하기")),
+                label: const Text("작성하기")),
             body: _buildBody(context)),
         onWillPop: () async {
           return false;
@@ -74,7 +76,7 @@ class _MainPageState extends State<MainPage> {
           return GestureDetector(
               onTap: () => {showBottomSheet(notiList[index])},
               child: Card(
-                  child: Container(
+                  child: SizedBox(
                       height: 80,
                       child: ListTile(
                         leading: const Image(
@@ -101,7 +103,7 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
             child: Container(
-                margin: EdgeInsets.all(20),
+                margin: const EdgeInsets.all(20),
                 child: Column(
                   children: <Widget>[
                     Container(
@@ -114,14 +116,14 @@ class _MainPageState extends State<MainPage> {
                       ))),
                       child: Row(
                         children: [
-                          Container(
+                          const SizedBox(
                             width: 100,
                             child: Text("지정시간", style: TextStyle(fontSize: 18)),
                           ),
                           Expanded(
                               child: Text(
-                                  "${DateFormat('yyyy-MM-dd HH:mm').format(item.date)}",
-                                  style: TextStyle(fontSize: 18)))
+                                  DateFormat('yyyy-MM-dd HH:mm').format(item.date),
+                                  style: const TextStyle(fontSize: 18)))
                         ],
                       ),
                     ),
@@ -135,30 +137,30 @@ class _MainPageState extends State<MainPage> {
                       ))),
                       child: Row(
                         children: [
-                          Container(
+                          const SizedBox(
                             width: 100,
                             child: Text("제목", style: TextStyle(fontSize: 18)),
                           ),
                           Expanded(
-                              child: Text("${item.title}",
-                                  style: TextStyle(fontSize: 18)))
+                              child: Text(item.title,
+                                  style: const TextStyle(fontSize: 18)))
                         ],
                       ),
                     ),
                     Expanded(
                         child: SingleChildScrollView(
                             child: Container(
-                      margin: EdgeInsets.only(top: 5),
+                      margin: const EdgeInsets.only(top: 5),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
+                          const SizedBox(
                             width: 100,
                             child: Text("내용", style: TextStyle(fontSize: 18)),
                           ),
                           Expanded(
-                              child: Text("${item.contents}",
-                                  style: TextStyle(fontSize: 18)))
+                              child: Text(item.contents,
+                                  style: const TextStyle(fontSize: 18)))
                         ],
                       ),
                     ))),
@@ -175,7 +177,7 @@ class _MainPageState extends State<MainPage> {
                             child: Row(
                               children: [
                                 ElevatedButton(
-                                    child: Text("알림 변경"),
+                                    child: const Text("알림 변경"),
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor:
                                             Colors.lightBlueAccent),
@@ -195,7 +197,7 @@ class _MainPageState extends State<MainPage> {
                                               });
                                     }),
                                 ElevatedButton(
-                                    child: Text("알림 끄기"),
+                                    child: const Text("알림 끄기"),
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.redAccent),
                                     onPressed: () async {
@@ -227,19 +229,19 @@ class _MainPageState extends State<MainPage> {
       children: [
         Expanded(
           child: Container(
-              margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
+              margin: const EdgeInsets.fromLTRB(20, 20, 20, 10),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: ElevatedButton(
                 onPressed: () {},
-                child: Text("날짜검색"),
+                child: const Text("날짜검색"),
               )),
           flex: 1,
         ),
         Expanded(
           child: Container(
               // color: Colors.grey,
-              margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
+              margin: const EdgeInsets.fromLTRB(20, 10, 20, 20),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: StreamBuilder<List<NotiData>>(
